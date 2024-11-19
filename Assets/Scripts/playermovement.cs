@@ -1,49 +1,89 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class playermovement : MonoBehaviour
 {
-    public float forwardSpeed = 10f;
-    public float landDistance = 2.5f;
-    public float positionOffset = 1f;
-    private int currentLane = 1;
-    private int sidePosition = 0;
+    private CharacterController character_Controller;
+    private Vector3 move_Direction;
 
+    public float speed = 5f;
+    private float gravity = 10f;
+
+    public float jump_Force = 10f;
+    private float vertical_Velocity;
+    public float turnSpeed = 100f;
+    public Animator animator;
+
+    void Awake(){
+        character_Controller = GetComponent<CharacterController>();
+        if (character_Controller == null) {
+        Debug.LogError("CharacterController component missing on " + gameObject.name);
+    }
+    }
+    
     void Update()
     {
-        transform.Translate(Vector3.forward * forwardSpeed * Time.deltaTime);
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            currentLane = 0;
-        }
-        else if (Input.GetKeyDown(KeyCode.W))
-        {
-            currentLane = 1;  
-        }
-        else if (Input.GetKeyDown(KeyCode.E))
-        {
-            currentLane = 2;
-        }
-        else if (Input.GetKeyDown(KeyCode.R))
-        {
-            currentLane = 3;
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftArrow) && sidePosition > -1)
-        {
-            sidePosition--;
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow) && sidePosition < 1)
-        {
-            sidePosition++;
-        }
-
-        float lanePositionX = (currentLane - 1.5f) * landDistance;
-        float sideOffset = sidePosition * positionOffset;
-        Vector3 targetPosition = new Vector3(lanePositionX + sideOffset, transform.position.y, transform.position.z);
-
-        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 10);
+        MoveThePlayer();
+        UpdateAnimator();
     }
+    void MoveThePlayer() {
+
+        if(Input.GetKey(KeyCode.LeftArrow))
+        {
+            transform.Rotate(Vector3.up, -turnSpeed * Time.deltaTime);
+        }
+        if(Input.GetKey(KeyCode.RightArrow))
+        {
+            transform.Rotate(Vector3.up, turnSpeed * Time.deltaTime);
+        }
+
+        float moveZ = Input.GetAxis("Vertical") * speed;
+        move_Direction = new Vector3(0, 0, moveZ);
+        move_Direction = transform.TransformDirection(move_Direction);
+
+        //move_Direction = new Vector3(Input.GetAxis("Horizontal"), 0f,
+                                     //Input.GetAxis("Vertical"));
+                            
+        //move_Direction = transform.TransformDirection(move_Direction);
+        //move_Direction *= speed * Time.deltaTime;
+       
+        ApplyGravity();
+        character_Controller.Move(move_Direction * Time.deltaTime);        
+    }
+
+    void UpdateAnimator(){
+        float forwardSpeed = new Vector3(move_Direction.x, 0, move_Direction.z).magnitude;
+        animator.SetFloat("Speed", forwardSpeed);
+    }
+
+    void ApplyGravity() {
+
+        if(character_Controller.isGrounded)
+        {
+            vertical_Velocity = -gravity * Time.deltaTime;
+            PlayerJump();
+        }
+        else
+        {
+            vertical_Velocity -= gravity * Time.deltaTime;
+        }
+        move_Direction.y = vertical_Velocity;
+
+
+        //vertical_Velocity -= gravity * Time.deltaTime;
+
+        //PlayerJump();
+        
+        //move_Direction.y = vertical_Velocity * Time.deltaTime;
+
+    }
+    void PlayerJump()
+    {
+        if(Input.GetKeyDown(KeyCode.Space) && character_Controller.isGrounded){
+            vertical_Velocity = jump_Force;
+        }
+    }
+    
 }
