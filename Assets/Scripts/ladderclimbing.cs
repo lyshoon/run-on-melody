@@ -30,6 +30,7 @@ public class ladderclimbing : MonoBehaviour
         }
     }
 
+
     void Update()
     {
         if(isClimbing && Input.GetKey(KeyCode.W))
