@@ -12,6 +12,15 @@ public class PlayerInventory : MonoBehaviour
     public void StarCollected()
     {
         NumberOfStars++;
-        OnStarCollected.Invoke(this);
+        Debug.Log("Stars collected: " + NumberOfStars);
+        
+        if(OnStarCollected != null)
+        {
+            Debug.Log("Invoking OnStarCollected event.");
+            OnStarCollected.Invoke(this);
+        }
+        else{
+            Debug.LogWarning("OnStarCollected event has no listener");
+        }
     }
 }

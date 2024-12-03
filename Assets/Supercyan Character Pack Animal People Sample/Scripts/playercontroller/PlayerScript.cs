@@ -71,11 +71,13 @@ public class PlayerScript : MonoBehaviour
     void HandleJumpAndClimb()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
+        Debug.Log("Is Grounded: " + isGrounded);
 
         if(isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
         }
+        Debug.Log("Velocity before jump: " + velocity);
         //jumping logic
 
         if(Input.GetKeyDown(KeyCode.Space) && !isClimbing)
@@ -104,6 +106,7 @@ public class PlayerScript : MonoBehaviour
     {
         if(other.CompareTag("Climbable"))
         {
+            Debug.Log("Player entered climbing state.");
             isClimbing = true;
         }
     }
@@ -112,6 +115,7 @@ public class PlayerScript : MonoBehaviour
     {
         if(other.CompareTag("Climbable"))
         {
+            Debug.Log("Player exited climbing state.");
             isClimbing = false;
         }
     }
