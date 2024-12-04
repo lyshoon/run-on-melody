@@ -10,14 +10,12 @@ public class PlayerScript : MonoBehaviour
     public MainCameraController MCC;
     Quaternion requiredRotation;
 
-    [Header ("Player Jump and Climb")]
+    [Header ("Player Jump")]
     public float jumpForce = 5f;
-    public float climbSpeed = 3f;
     public bool isGrounded = false;
     public LayerMask groundLayer;
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
-    private bool isClimbing = false;
 
     [Header("Player Animator")]
     public Animator animator;
@@ -30,7 +28,7 @@ public class PlayerScript : MonoBehaviour
     private void Update()
     {
         PlayerMovement();
-        HandleJumpAndClimb();
+        HandleJump();
     }
 
     void PlayerMovement()
@@ -44,15 +42,6 @@ public class PlayerScript : MonoBehaviour
         // Rotate movement direction based on camera's flat rotation
         Vector3 movementDirection = MCC.flatRotation * movementInput;
 
-        if(isClimbing)
-        {
-            float climbVertical = Input.GetAxis("Vertical");
-            CC.Move(Vector3.up * climbVertical * climbSpeed * Time.deltaTime);
-            animator.SetBool("isClimbing", true);
-        }
-        else
-        {
-
         // Apply movement
         if (movementInput.magnitude > 0)
         {
@@ -63,12 +52,10 @@ public class PlayerScript : MonoBehaviour
         transform.rotation = Quaternion.RotateTowards(transform.rotation, requiredRotation, rotSpeed * Time.deltaTime);
 
         animator.SetFloat("movementValue", movementInput.magnitude, 0.2f, Time.deltaTime);
-        }
 
-        animator.SetBool("isClimbing", isClimbing);
     }
 
-    void HandleJumpAndClimb()
+    void HandleJump()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
         Debug.Log("Is Grounded: " + isGrounded);
@@ -78,45 +65,16 @@ public class PlayerScript : MonoBehaviour
             velocity.y = -2f;
         }
         Debug.Log("Velocity before jump: " + velocity);
+
         //jumping logic
 
-        if(Input.GetKeyDown(KeyCode.Space) && !isClimbing)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            if(isGrounded)
-            {
-                velocity.y = Mathf.Sqrt(jumpForce * -2f * gravity);
-                animator.SetTrigger("jump");
-            }
-        }
-
-        if(Input.GetKey(KeyCode.J) && isClimbing)
-        {
-            float climbVertical = Input.GetAxis("Vertical");
-            CC.Move(Vector3.up * climbVertical * climbSpeed * Time.deltaTime);
-            animator.SetBool("isClimbing", true);
-        }
-        else{
-            animator.SetBool("isClimbing", false);
+            velocity.y = Mathf.Sqrt(jumpForce * -2f * gravity);
+            animator.SetTrigger("jump");
         }
 
         velocity.y += gravity * Time.deltaTime;
         CC.Move(velocity * Time.deltaTime);
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.CompareTag("Climbable"))
-        {
-            Debug.Log("Player entered climbing state.");
-            isClimbing = true;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if(other.CompareTag("Climbable"))
-        {
-            Debug.Log("Player exited climbing state.");
-            isClimbing = false;
-        }
     }
 }
