@@ -55,11 +55,21 @@ public class PlayerInventory : MonoBehaviour
     }
 
     public void OnNoClicked()
+{
+    Debug.Log("No button clicked.");
+    if (travelPrompt != null)
     {
-        if (travelPrompt != null)
-        {
-            Debug.Log("Player chose not to travel.");
-            travelPrompt.SetActive(false);
-        }
+        Debug.Log("Hiding travel prompt.");
+        travelPrompt.SetActive(false);
+
+        // Ensure cursor visibility
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
+    else
+    {
+        Debug.LogError("travelPrompt is not assigned in the Inspector.");
+    }
+}
+
 }
