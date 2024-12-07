@@ -8,6 +8,10 @@ TagManager:
   - Rabbit
   - allcastle
   - Overrides
+  - SpawnPoint
+  - Heart
+  - Ground
+  - Obstacle
   layers:
   - Default
   - TransparentFX
@@ -19,7 +23,7 @@ TagManager:
   - Obstacle
   - Climbable
   - Ground
-  - 
+  - SpawnPoint
   - 
   - 
   - 
