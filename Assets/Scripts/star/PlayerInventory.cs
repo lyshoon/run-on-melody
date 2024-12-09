@@ -42,6 +42,8 @@ public class PlayerInventory : MonoBehaviour
             {
                 travelPrompt.SetActive(true);
             }
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
     }
 

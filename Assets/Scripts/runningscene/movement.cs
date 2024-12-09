@@ -139,11 +139,6 @@ public class movement : MonoBehaviour
         if (startScreen) startScreen.gameObject.SetActive(true);
     }
 
-    void ShowStartScreen()
-    {
-        GameManager.Instance.ShowStartScreen();
-    }
-
     void UpdateScoreUI()
     {
         if (scoreText)

@@ -1,21 +1,16 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    // UI References
-    public TextMeshProUGUI startScreen;
-
-    void Awake()
+    private void Awake()
     {
-        // Ensure only one instance of the GameManager exists
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Keep the GameManager between scenes
+            DontDestroyOnLoad(gameObject); 
         }
         else
         {
@@ -23,29 +18,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ShowStartScreen()
+    public void LoadScene(string sceneName)
     {
-        if (startScreen != null)
-        {
-            startScreen.gameObject.SetActive(true);
-        }
-    }
-
-    public void HideStartScreen()
-    {
-        if (startScreen != null)
-        {
-            startScreen.gameObject.SetActive(false);
-        }
+        SceneManager.LoadScene(sceneName);
     }
 
     public void RestartGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
-    public void GoToStartScene()
-    {
-        SceneManager.LoadScene("StartScreen"); 
+        SceneManager.LoadScene("StartScreen");
     }
 }
