@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using TMPro;
 
 public class movement : MonoBehaviour
 {
@@ -25,15 +27,19 @@ public class movement : MonoBehaviour
     private int heartCollected = 0;
 
     // UI elements to show progress
-    public UnityEngine.UI.Text winText;
-    public UnityEngine.UI.Text loseText;
-    public UnityEngine.UI.Text scoreText;
+    public TextMeshProUGUI winText;
+    public TextMeshProUGUI loseText;
+    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI hitText;
+    public TextMeshProUGUI startScreen;
+
 
     void Start()
     {
         // Initialize UI texts
         if (winText) winText.gameObject.SetActive(false);
         if (loseText) loseText.gameObject.SetActive(false);
+        if (startScreen) startScreen.gameObject.SetActive(false);
         UpdateScoreUI();
     }
 
@@ -90,6 +96,7 @@ public class movement : MonoBehaviour
         if (collision.gameObject.CompareTag("Obstacle"))
         {
             obstacleHits++;
+            UpdateScoreUI();
             if (obstacleHits >= 3)
             {
                 LoseGame();
@@ -119,6 +126,8 @@ public class movement : MonoBehaviour
         speed = 0; // Stop the player from moving
         if (loseText) loseText.gameObject.SetActive(true);
         Debug.Log("You lose!");
+
+        if (startScreen) startScreen.gameObject.SetActive(true);
     }
 
     void WinGame()
@@ -126,13 +135,25 @@ public class movement : MonoBehaviour
         speed = 0; // Stop the player from moving
         if (winText) winText.gameObject.SetActive(true);
         Debug.Log("You win!");
+
+        if (startScreen) startScreen.gameObject.SetActive(true);
+    }
+
+    void ShowStartScreen()
+    {
+        GameManager.Instance.ShowStartScreen();
     }
 
     void UpdateScoreUI()
     {
         if (scoreText)
         {
-            scoreText.text = $"Hearts: {heartCollected} / 30\nHits: {obstacleHits} / 3";
+            scoreText.text = $"Hearts: {heartCollected} / 30";
+        }
+        if(hitText)
+        {
+            hitText.text = $"Hits: {obstacleHits} / 3";
         }
     }
+    
 }
