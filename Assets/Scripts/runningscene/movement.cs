@@ -33,6 +33,8 @@ public class movement : MonoBehaviour
     public TextMeshProUGUI hitText;
     public TextMeshProUGUI startScreen;
 
+    private bool isGameStarted = false;
+
 
     void Start()
     {
@@ -41,10 +43,13 @@ public class movement : MonoBehaviour
         if (loseText) loseText.gameObject.SetActive(false);
         if (startScreen) startScreen.gameObject.SetActive(false);
         UpdateScoreUI();
+
+        StartCoroutine(StartGameAfterDelay(3f));
     }
 
     void FixedUpdate()
     {
+        if(!isGameStarted) return;
         // Move forward (Z-axis movement)
         Vector3 forwardMove = transform.forward * speed * Time.fixedDeltaTime;
 
@@ -73,6 +78,7 @@ public class movement : MonoBehaviour
 
     void Update()
     {
+        if(!isGameStarted) return;
         // Handle player input for horizontal movement
         horizontalInput = Input.GetAxis("Horizontal");
 
@@ -82,10 +88,20 @@ public class movement : MonoBehaviour
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
+
+    IEnumerator StartGameAfterDelay(float delay)
+    {
+        if(startScreen) startScreen.text = "Get ready";
+        yield return new WaitForSeconds(delay);
+        if(startScreen) startScreen.gameObject.SetActive(false);
+        isGameStarted = true;
+        Debug.Log("Game Started");
+    }
     
 
     private void OnCollisionEnter(Collision collision)
     {
+        if(!isGameStarted) return;
         // Check if player lands on the ground
         if (collision.gameObject.CompareTag("Ground"))
         {
@@ -106,6 +122,7 @@ public class movement : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if(!isGameStarted) return;
         // Check if player collects a heart
         if (other.gameObject.CompareTag("Heart"))
         {
