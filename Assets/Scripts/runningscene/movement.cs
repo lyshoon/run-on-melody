@@ -91,7 +91,7 @@ public class movement : MonoBehaviour
 
     IEnumerator StartGameAfterDelay(float delay)
     {
-        if(startScreen) startScreen.text = "Get ready";
+        if(startScreen) startScreen.text = "Tap here to start again";
         yield return new WaitForSeconds(delay);
         if(startScreen) startScreen.gameObject.SetActive(false);
         isGameStarted = true;
